@@ -86,11 +86,6 @@ export const TVCard = ({
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Resolução</span>
-            <span className="text-sm font-medium text-foreground">{resolution}</span>
-          </div>
-
-          <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Modelo</span>
             <span className="text-sm font-medium text-foreground">{model}</span>
           </div>
