@@ -1,99 +1,57 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { TVCard } from "@/components/TVCard";
 import { StatsCard } from "@/components/StatsCard";
-import { Monitor, Tv, Wifi, Activity } from "lucide-react";
-
-interface TV {
-  id: string;
-  name: string;
-  location: string;
-  status: "online" | "offline";
-  lastSeen: string;
-  resolution: string;
-  model: string;
-}
+import { Monitor, Tv, Wifi, Activity, Plus } from "lucide-react";
+import { useDevices } from "@/hooks/useDevices";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  const [tvs, setTvs] = useState<TV[]>([
-    {
-      id: "1",
-      name: "TV Sala Principal",
-      location: "Sala de Estar",
-      status: "online",
-      lastSeen: "Agora",
-      resolution: "4K (3840x2160)",
-      model: "Samsung QLED 55\""
-    },
-    {
-      id: "2",
-      name: "TV Quarto Master",
-      location: "Quarto Principal",
-      status: "offline",
-      lastSeen: "2 horas atrás",
-      resolution: "Full HD (1920x1080)",
-      model: "LG Smart TV 43\""
-    },
-    {
-      id: "3",
-      name: "TV Cozinha",
-      location: "Área da Cozinha",
-      status: "online",
-      lastSeen: "Agora",
-      resolution: "HD (1366x768)",
-      model: "Philips 32\""
-    },
-    {
-      id: "4",
-      name: "TV Escritório",
-      location: "Home Office",
-      status: "online",
-      lastSeen: "5 min atrás",
-      resolution: "4K (3840x2160)",
-      model: "Sony Bravia 49\""
-    },
-    {
-      id: "5",
-      name: "TV Quarto Hóspede",
-      location: "Quarto de Visitas",
-      status: "offline",
-      lastSeen: "1 dia atrás",
-      resolution: "Full HD (1920x1080)",
-      model: "TCL Android TV 40\""
-    },
-    {
-      id: "6",
-      name: "TV Área Externa",
-      location: "Varanda/Piscina",
-      status: "online",
-      lastSeen: "Agora",
-      resolution: "4K (3840x2160)",
-      model: "Samsung Outdoor 55\""
-    }
-  ]);
+  const { devices, loading, addDevice, removeDevice } = useDevices();
 
-  const onlineTvs = tvs.filter(tv => tv.status === "online").length;
-  const offlineTvs = tvs.filter(tv => tv.status === "offline").length;
-  const totalTvs = tvs.length;
-  const uptime = Math.round((onlineTvs / totalTvs) * 100);
+  const onlineDevices = devices.filter(device => device.status === "online").length;
+  const offlineDevices = devices.filter(device => device.status === "offline").length;
+  const totalDevices = devices.length;
+  const uptime = totalDevices > 0 ? Math.round((onlineDevices / totalDevices) * 100) : 0;
 
-  // Simulate real-time updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTvs(prev => prev.map(tv => {
-        // Randomly toggle status for demo purposes (10% chance)
-        if (Math.random() < 0.1) {
-          return {
-            ...tv,
-            status: tv.status === "online" ? "offline" : "online",
-            lastSeen: tv.status === "offline" ? "Agora" : "Agora"
-          };
-        }
-        return tv;
-      }));
-    }, 5000);
+  const handleAddSampleDevice = async () => {
+    const sampleDevices = [
+      {
+        name: "TV Sala Principal",
+        location: "Sala de Estar", 
+        status: "online" as const,
+        model: "Samsung QLED 55\""
+      },
+      {
+        name: "TV Quarto Master",
+        location: "Quarto Principal",
+        status: "offline" as const,
+        model: "LG Smart TV 43\""
+      },
+      {
+        name: "TV Cozinha",
+        location: "Área da Cozinha",
+        status: "online" as const,
+        model: "Philips 32\""
+      }
+    ];
 
-    return () => clearInterval(interval);
-  }, []);
+    const randomDevice = sampleDevices[Math.floor(Math.random() * sampleDevices.length)];
+    await addDevice(randomDevice);
+  };
+
+  // Format last seen based on updated_at
+  const formatLastSeen = (updatedAt?: string) => {
+    if (!updatedAt) return "Nunca";
+    
+    const now = new Date();
+    const updated = new Date(updatedAt);
+    const diffInMinutes = Math.floor((now.getTime() - updated.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return "Agora";
+    if (diffInMinutes < 60) return `${diffInMinutes} min atrás`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} horas atrás`;
+    return `${Math.floor(diffInMinutes / 1440)} dias atrás`;
+  };
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
@@ -114,20 +72,20 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard
             title="Total de TVs"
-            value={totalTvs}
+            value={totalDevices}
             description="Dispositivos cadastrados"
             icon={Tv}
           />
           <StatsCard
             title="TVs Online"
-            value={onlineTvs}
+            value={onlineDevices}
             description="Dispositivos ativos"
             icon={Wifi}
             className="border-success/30"
           />
           <StatsCard
             title="TVs Offline"
-            value={offlineTvs}
+            value={offlineDevices}
             description="Dispositivos inativos"
             icon={Monitor}
             className="border-red-500/30"
@@ -147,32 +105,58 @@ const Index = () => {
             <h2 className="text-2xl font-semibold text-foreground">
               Status das TVs
             </h2>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
-                <span>Online</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <span>Offline</span>
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={handleAddSampleDevice}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Adicionar TV
+              </Button>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
+                  <span>Online</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <span>Offline</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tvs.map((tv) => (
-              <TVCard
-                key={tv.id}
-                id={tv.id}
-                name={tv.name}
-                location={tv.location}
-                status={tv.status}
-                lastSeen={tv.lastSeen}
-                resolution={tv.resolution}
-                model={tv.model}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Carregando dispositivos...</p>
+            </div>
+          ) : devices.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Nenhum dispositivo cadastrado.</p>
+              <Button 
+                onClick={handleAddSampleDevice}
+                className="mt-4"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar primeiro dispositivo
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {devices.map((device) => (
+                <TVCard
+                  key={device.id}
+                  id={device.id}
+                  name={device.name}
+                  location={device.location}
+                  status={device.status}
+                  lastSeen={formatLastSeen(device.updated_at)}
+                  model={device.model}
+                  onRemove={() => removeDevice(device.id)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Footer */}

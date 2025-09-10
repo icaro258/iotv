@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Monitor, Wifi, WifiOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Monitor, Wifi, WifiOff, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TVCardProps {
@@ -9,8 +10,8 @@ interface TVCardProps {
   location: string;
   status: "online" | "offline";
   lastSeen: string;
-  resolution?: string;
   model?: string;
+  onRemove?: () => void;
 }
 
 export const TVCard = ({ 
@@ -19,8 +20,8 @@ export const TVCard = ({
   location, 
   status, 
   lastSeen, 
-  resolution = "1920x1080",
-  model = "Smart TV"
+  model = "Smart TV",
+  onRemove
 }: TVCardProps) => {
   const isOnline = status === "online";
 
@@ -48,22 +49,34 @@ export const TVCard = ({
               <p className="text-sm text-muted-foreground">{location}</p>
             </div>
           </div>
-          <Badge 
-            variant={isOnline ? "default" : "destructive"}
-            className={cn(
-              "gap-1.5 px-3 py-1",
-              isOnline 
-                ? "bg-success/20 text-success border-success/30 hover:bg-success/30" 
-                : "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant={isOnline ? "default" : "destructive"}
+              className={cn(
+                "gap-1.5 px-3 py-1",
+                isOnline 
+                  ? "bg-success/20 text-success border-success/30 hover:bg-success/30" 
+                  : "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
+              )}
+            >
+              {isOnline ? (
+                <Wifi className="h-3 w-3" />
+              ) : (
+                <WifiOff className="h-3 w-3" />
+              )}
+              {status.toUpperCase()}
+            </Badge>
+            {onRemove && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onRemove}
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             )}
-          >
-            {isOnline ? (
-              <Wifi className="h-3 w-3" />
-            ) : (
-              <WifiOff className="h-3 w-3" />
-            )}
-            {status.toUpperCase()}
-          </Badge>
+          </div>
         </div>
 
         <div className="space-y-3">
