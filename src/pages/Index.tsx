@@ -105,12 +105,9 @@ const Index = () => {
               <Monitor className="h-8 w-8 text-primary-foreground" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              Monitor de TVs
+              IoTV
             </h1>
           </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Acompanhe o status de todas as suas televisões em tempo real
-          </p>
         </div>
 
         {/* Stats Grid */}
