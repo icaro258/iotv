@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { TVCard } from "@/components/TVCard";
 import { StatsCard } from "@/components/StatsCard";
-import { Monitor, Tv, Wifi, Activity, Plus } from "lucide-react";
+import { Monitor, Tv, Wifi, Activity } from "lucide-react";
 import { useDevices } from "@/hooks/useDevices";
-import { Button } from "@/components/ui/button";
+import { AddDeviceDialog } from "@/components/AddDeviceDialog";
 
 const Index = () => {
   const { devices, loading, addDevice, removeDevice } = useDevices();
@@ -13,31 +13,6 @@ const Index = () => {
   const totalDevices = devices.length;
   const uptime = totalDevices > 0 ? Math.round((onlineDevices / totalDevices) * 100) : 0;
 
-  const handleAddSampleDevice = async () => {
-    const sampleDevices = [
-      {
-        name: "TV Sala Principal",
-        location: "Sala de Estar", 
-        status: "online" as const,
-        model: "Samsung QLED 55\""
-      },
-      {
-        name: "TV Quarto Master",
-        location: "Quarto Principal",
-        status: "offline" as const,
-        model: "LG Smart TV 43\""
-      },
-      {
-        name: "TV Cozinha",
-        location: "Área da Cozinha",
-        status: "online" as const,
-        model: "Philips 32\""
-      }
-    ];
-
-    const randomDevice = sampleDevices[Math.floor(Math.random() * sampleDevices.length)];
-    await addDevice(randomDevice);
-  };
 
   // Format last seen based on updated_at
   const formatLastSeen = (updatedAt?: string) => {
@@ -106,13 +81,7 @@ const Index = () => {
               Status das TVs
             </h2>
             <div className="flex items-center gap-4">
-              <Button 
-                onClick={handleAddSampleDevice}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Adicionar TV
-              </Button>
+              <AddDeviceDialog onAdd={addDevice} />
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
@@ -133,13 +102,7 @@ const Index = () => {
           ) : devices.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">Nenhum dispositivo cadastrado.</p>
-              <Button 
-                onClick={handleAddSampleDevice}
-                className="mt-4"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar primeiro dispositivo
-              </Button>
+              <AddDeviceDialog onAdd={addDevice} className="mt-4" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

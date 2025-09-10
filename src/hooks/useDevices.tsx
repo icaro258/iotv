@@ -21,7 +21,7 @@ export const useDevices = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase.functions.invoke('devices', {
-        method: 'GET',
+        body: { action: 'list' },
       });
 
       if (error) {
@@ -52,8 +52,7 @@ export const useDevices = () => {
   const addDevice = async (deviceData: Omit<Device, 'id'>) => {
     try {
       const { data, error } = await supabase.functions.invoke('devices', {
-        method: 'POST',
-        body: deviceData,
+        body: { action: 'create', device: deviceData },
       });
 
       if (error) {
@@ -88,9 +87,8 @@ export const useDevices = () => {
 
   const updateDevice = async (deviceId: string, updates: Partial<Device>) => {
     try {
-      const { data, error } = await supabase.functions.invoke(`devices/${deviceId}`, {
-        method: 'PUT',
-        body: updates,
+      const { data, error } = await supabase.functions.invoke('devices', {
+        body: { action: 'update', id: deviceId, updates },
       });
 
       if (error) {
@@ -127,8 +125,8 @@ export const useDevices = () => {
 
   const removeDevice = async (deviceId: string) => {
     try {
-      const { error } = await supabase.functions.invoke(`devices/${deviceId}`, {
-        method: 'DELETE',
+      const { error } = await supabase.functions.invoke('devices', {
+        body: { action: 'delete', id: deviceId },
       });
 
       if (error) {
