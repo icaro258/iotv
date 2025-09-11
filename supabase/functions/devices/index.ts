@@ -30,9 +30,14 @@ Deno.serve(async (req) => {
 
   try {
     // Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')
+    
+    console.log('Environment check:', { supabaseUrl: !!supabaseUrl, supabaseKey: !!supabaseKey })
+    
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      supabaseUrl ?? '',
+      supabaseKey ?? '',
     )
 
     if (req.method !== 'POST') {
@@ -42,10 +47,17 @@ Deno.serve(async (req) => {
       })
     }
 
-    const body = (await req.json().catch(() => ({}))) as Partial<InvokeBody>
+    const body = (await req.json().catch((err) => {
+      console.error('JSON parsing error:', err)
+      return {}
+    })) as Partial<InvokeBody>
+    
+    console.log('Request body:', body)
+    
     const action = body.action
 
     if (!action) {
+      console.log('Missing action in body:', body)
       return new Response(JSON.stringify({ error: 'Missing action' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
