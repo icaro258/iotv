@@ -6,7 +6,7 @@ import { useDevices } from "@/hooks/useDevices";
 import { AddDeviceDialog } from "@/components/AddDeviceDialog";
 
 const Index = () => {
-  const { devices, loading, addDevice, removeDevice } = useDevices();
+  const { devices, loading, addDevice, updateDevice, removeDevice } = useDevices();
 
   const onlineDevices = devices.filter(device => device.status === "online").length;
   const offlineDevices = devices.filter(device => device.status === "offline").length;
@@ -26,6 +26,10 @@ const Index = () => {
     if (diffInMinutes < 60) return `${diffInMinutes} min atrás`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} horas atrás`;
     return `${Math.floor(diffInMinutes / 1440)} dias atrás`;
+  };
+
+  const handleStatusToggle = async (deviceId: string, newStatus: 'online' | 'offline') => {
+    await updateDevice(deviceId, { status: newStatus });
   };
 
   return (
@@ -107,16 +111,17 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {devices.map((device) => (
-                <TVCard
-                  key={device.id}
-                  id={device.id}
-                  name={device.name}
-                  location={device.location}
-                  status={device.status}
-                  lastSeen={formatLastSeen(device.updated_at)}
-                  model={device.model}
-                  onRemove={() => removeDevice(device.id)}
-                />
+                  <TVCard
+                    key={device.id}
+                    id={device.id}
+                    name={device.name}
+                    location={device.location}
+                    status={device.status}
+                    lastSeen={formatLastSeen(device.updated_at)}
+                    model={device.model}
+                    onRemove={() => removeDevice(device.id)}
+                    onStatusToggle={handleStatusToggle}
+                  />
               ))}
             </div>
           )}

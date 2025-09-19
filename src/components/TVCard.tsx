@@ -12,6 +12,7 @@ interface TVCardProps {
   lastSeen: string;
   model?: string;
   onRemove?: () => void;
+  onStatusToggle?: (id: string, newStatus: "online" | "offline") => void;
 }
 
 export const TVCard = ({ 
@@ -21,9 +22,17 @@ export const TVCard = ({
   status, 
   lastSeen, 
   model = "Smart TV",
-  onRemove
+  onRemove,
+  onStatusToggle
 }: TVCardProps) => {
   const isOnline = status === "online";
+
+  const handleStatusToggle = () => {
+    if (onStatusToggle) {
+      const newStatus = isOnline ? "offline" : "online";
+      onStatusToggle(id, newStatus);
+    }
+  };
 
   return (
     <Card className={cn(
@@ -53,11 +62,13 @@ export const TVCard = ({
             <Badge 
               variant={isOnline ? "default" : "destructive"}
               className={cn(
-                "gap-1.5 px-3 py-1",
+                "gap-1.5 px-3 py-1 cursor-pointer transition-all duration-200",
+                onStatusToggle && "hover:scale-105",
                 isOnline 
                   ? "bg-success/20 text-success border-success/30 hover:bg-success/30" 
                   : "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
               )}
+              onClick={onStatusToggle ? handleStatusToggle : undefined}
             >
               {isOnline ? (
                 <Wifi className="h-3 w-3" />
