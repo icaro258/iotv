@@ -17,28 +17,40 @@ export type Database = {
       devices: {
         Row: {
           created_at: string
+          heartbeat_interval: number | null
           id: string
+          last_heartbeat: string | null
           location: string
           model: string
+          mqtt_topic: string | null
           name: string
+          sensor_data: Json | null
           status: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          heartbeat_interval?: number | null
           id?: string
+          last_heartbeat?: string | null
           location: string
           model: string
+          mqtt_topic?: string | null
           name: string
+          sensor_data?: Json | null
           status?: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          heartbeat_interval?: number | null
           id?: string
+          last_heartbeat?: string | null
           location?: string
           model?: string
+          mqtt_topic?: string | null
           name?: string
+          sensor_data?: Json | null
           status?: string
           updated_at?: string
         }

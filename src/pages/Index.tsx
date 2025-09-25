@@ -117,8 +117,9 @@ const Index = () => {
                     name={device.name}
                     location={device.location}
                     status={device.status}
-                    lastSeen={formatLastSeen(device.updated_at)}
+                    lastSeen={formatLastSeen(device.last_heartbeat || device.updated_at)}
                     model={device.model}
+                    sensorData={device.sensor_data}
                     onRemove={() => removeDevice(device.id)}
                     onStatusToggle={handleStatusToggle}
                   />

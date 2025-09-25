@@ -8,6 +8,15 @@ export interface Device {
   location: string;
   status: 'online' | 'offline';
   model: string;
+  mqtt_topic?: string;
+  sensor_data?: {
+    current?: number;
+    voltage?: number;
+    power?: number;
+    temperature?: number;
+  };
+  last_heartbeat?: string;
+  heartbeat_interval?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -158,6 +167,27 @@ export const useDevices = () => {
 
   useEffect(() => {
     fetchDevices();
+
+    // Set up realtime subscription
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'devices'
+        },
+        (payload) => {
+          console.log('Device updated:', payload);
+          fetchDevices(); // Refetch devices when there's a change
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return {

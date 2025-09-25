@@ -11,6 +11,12 @@ interface TVCardProps {
   status: "online" | "offline";
   lastSeen: string;
   model?: string;
+  sensorData?: {
+    current?: number;
+    voltage?: number;
+    power?: number;
+    temperature?: number;
+  };
   onRemove?: () => void;
   onStatusToggle?: (id: string, newStatus: "online" | "offline") => void;
 }
@@ -22,6 +28,7 @@ export const TVCard = ({
   status, 
   lastSeen, 
   model = "Smart TV",
+  sensorData,
   onRemove,
   onStatusToggle
 }: TVCardProps) => {
@@ -90,35 +97,47 @@ export const TVCard = ({
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Status</span>
-            <div className={cn(
-              "flex items-center gap-2",
-              isOnline ? "text-success" : "text-red-400"
-            )}>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Status</span>
               <div className={cn(
-                "w-2 h-2 rounded-full",
-                isOnline 
-                  ? "bg-success animate-pulse shadow-lg shadow-success/50" 
-                  : "bg-red-500 shadow-lg shadow-red-500/50"
-              )} />
-              <span className="text-sm font-medium">
-                {isOnline ? "Ligada" : "Desligada"}
-              </span>
+                "flex items-center gap-2",
+                isOnline ? "text-success" : "text-red-400"
+              )}>
+                <div className={cn(
+                  "w-2 h-2 rounded-full",
+                  isOnline 
+                    ? "bg-success animate-pulse shadow-lg shadow-success/50" 
+                    : "bg-red-500 shadow-lg shadow-red-500/50"
+                )} />
+                <span className="text-sm font-medium">
+                  {isOnline ? "Ligada" : "Desligada"} 
+                  {sensorData?.power && ` • ${sensorData.power.toFixed(1)}W`}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Modelo</span>
+              <span className="text-sm font-medium text-foreground">{model}</span>
+            </div>
+
+            {sensorData && (sensorData.current || sensorData.voltage || sensorData.temperature) && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Sensores</span>
+                <div className="text-sm font-medium text-foreground flex gap-2">
+                  {sensorData.current && <span>{sensorData.current.toFixed(2)}A</span>}
+                  {sensorData.voltage && <span>{sensorData.voltage.toFixed(0)}V</span>}
+                  {sensorData.temperature && <span>{sensorData.temperature.toFixed(1)}°C</span>}
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-2 border-t border-border/50">
+              <span className="text-sm text-muted-foreground">Última conexão</span>
+              <span className="text-sm font-medium text-foreground">{lastSeen}</span>
             </div>
           </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Modelo</span>
-            <span className="text-sm font-medium text-foreground">{model}</span>
-          </div>
-
-          <div className="flex justify-between items-center pt-2 border-t border-border/50">
-            <span className="text-sm text-muted-foreground">Última conexão</span>
-            <span className="text-sm font-medium text-foreground">{lastSeen}</span>
-          </div>
-        </div>
 
         {/* Status indicator line */}
         <div className={cn(
