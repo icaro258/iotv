@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { TVCard } from "@/components/TVCard";
 import { StatsCard } from "@/components/StatsCard";
 import { Monitor, Tv, Wifi, Activity } from "lucide-react";
-import { useDevices } from "@/hooks/useDevices";
+import { useDevices } from "@/hooks/useDevicesDemo";
 import { AddDeviceDialog } from "@/components/AddDeviceDialog";
 
 const Index = () => {
