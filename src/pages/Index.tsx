@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import { TVCard } from "@/components/TVCard";
 import { StatsCard } from "@/components/StatsCard";
-import { Monitor, Tv, Wifi, Activity } from "lucide-react";
+import { Monitor, Tv, Wifi, Activity, Power, PowerOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { useDevices } from "@/hooks/useDevicesDemo";
 import { AddDeviceDialog } from "@/components/AddDeviceDialog";
 
 const Index = () => {
   const { devices, loading, addDevice, updateDevice, removeDevice } = useDevices();
+  const { toast } = useToast();
 
   const onlineDevices = devices.filter(device => device.status === "online").length;
   const offlineDevices = devices.filter(device => device.status === "offline").length;
@@ -28,8 +31,22 @@ const Index = () => {
     return `${Math.floor(diffInMinutes / 1440)} dias atrás`;
   };
 
-  const handleStatusToggle = async (deviceId: string, newStatus: 'online' | 'offline') => {
-    await updateDevice(deviceId, { status: newStatus });
+  const handleToggleAll = async () => {
+    // Determina se deve ligar ou desligar baseado na maioria
+    const shouldTurnOn = offlineDevices >= onlineDevices;
+    const newStatus = shouldTurnOn ? "online" : "offline";
+    
+    // Atualiza todas as TVs
+    for (const device of devices) {
+      if (device.status !== newStatus) {
+        await updateDevice(device.id, { status: newStatus });
+      }
+    }
+    
+    toast({
+      title: shouldTurnOn ? "TVs ligadas" : "TVs desligadas",
+      description: `Todas as TVs foram ${shouldTurnOn ? "ligadas" : "desligadas"} com sucesso.`,
+    });
   };
 
   return (
@@ -85,6 +102,25 @@ const Index = () => {
               Status das TVs
             </h2>
             <div className="flex items-center gap-4">
+              <Button
+                onClick={handleToggleAll}
+                disabled={devices.length === 0}
+                className={offlineDevices >= onlineDevices 
+                  ? "bg-success hover:bg-success/90" 
+                  : "bg-destructive hover:bg-destructive/90"}
+              >
+                {offlineDevices >= onlineDevices ? (
+                  <>
+                    <Power className="h-4 w-4 mr-2" />
+                    Ligar Todas
+                  </>
+                ) : (
+                  <>
+                    <PowerOff className="h-4 w-4 mr-2" />
+                    Desligar Todas
+                  </>
+                )}
+              </Button>
               <AddDeviceDialog onAdd={addDevice} />
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
@@ -121,7 +157,6 @@ const Index = () => {
                     model={device.model}
                     sensorData={device.sensor_data}
                     onRemove={() => removeDevice(device.id)}
-                    onStatusToggle={handleStatusToggle}
                   />
               ))}
             </div>
