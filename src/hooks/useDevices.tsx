@@ -8,6 +8,7 @@ export interface Device {
   location: string;
   status: 'online' | 'offline';
   model: string;
+  mac_address: string;
   mqtt_topic?: string;
   sensor_data?: {
     current?: number;

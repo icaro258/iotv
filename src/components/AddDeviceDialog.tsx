@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 
 interface AddDeviceDialogProps {
-  onAdd: (device: { name: string; location: string; model: string; status?: 'online' | 'offline' }) => Promise<boolean> | boolean;
+  onAdd: (device: { name: string; location: string; model: string; mac_address: string; status: 'online' | 'offline' }) => Promise<boolean> | boolean;
   className?: string;
 }
 
@@ -22,20 +22,20 @@ export const AddDeviceDialog = ({ onAdd, className }: AddDeviceDialogProps) => {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [model, setModel] = useState("");
-  const [status, setStatus] = useState<'online' | 'offline'>('offline');
+  const [macAddress, setMacAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const ok = await onAdd({ name, location, model, status });
+    const ok = await onAdd({ name, location, model, mac_address: macAddress, status: 'offline' });
     setLoading(false);
     if (ok) {
       setOpen(false);
       setName("");
       setLocation("");
       setModel("");
-      setStatus('offline');
+      setMacAddress("");
     }
   };
 
@@ -62,18 +62,18 @@ export const AddDeviceDialog = ({ onAdd, className }: AddDeviceDialogProps) => {
             <Input id="model" value={model} onChange={(e) => setModel(e.target.value)} required />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="status">Iniciar como online</Label>
-              <Switch 
-                id="status"
-                checked={status === 'online'}
-                onCheckedChange={(checked) => setStatus(checked ? 'online' : 'offline')}
-              />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {status === 'online' ? 'A TV será adicionada como conectada' : 'A TV será adicionada como desconectada'}
-            </p>
+            <Label htmlFor="macAddress">Endereço MAC</Label>
+            <Input 
+              id="macAddress" 
+              value={macAddress} 
+              onChange={(e) => setMacAddress(e.target.value)} 
+              placeholder="00:00:00:00:00:00"
+              required 
+            />
           </div>
+          <p className="text-sm text-muted-foreground">
+            A TV será adicionada como desconectada
+          </p>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar

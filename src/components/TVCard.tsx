@@ -71,7 +71,6 @@ export const TVCard = ({
               ) : (
                 <WifiOff className="h-3 w-3" />
               )}
-              {status.toUpperCase()}
             </Badge>
             {onRemove && (
               <Button
