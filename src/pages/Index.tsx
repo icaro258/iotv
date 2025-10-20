@@ -31,21 +31,29 @@ const Index = () => {
     return `${Math.floor(diffInMinutes / 1440)} dias atrás`;
   };
 
-  const handleToggleAll = async () => {
-    // Determina se deve ligar ou desligar baseado na maioria
-    const shouldTurnOn = offlineDevices >= onlineDevices;
-    const newStatus = shouldTurnOn ? "online" : "offline";
+  const handleTurnOnAll = async () => {
+    const offlineTVs = devices.filter(device => device.status === "offline");
     
-    // Atualiza todas as TVs
-    for (const device of devices) {
-      if (device.status !== newStatus) {
-        await updateDevice(device.id, { status: newStatus });
-      }
+    for (const device of offlineTVs) {
+      await updateDevice(device.id, { status: "online" });
     }
     
     toast({
-      title: shouldTurnOn ? "TVs ligadas" : "TVs desligadas",
-      description: `Todas as TVs foram ${shouldTurnOn ? "ligadas" : "desligadas"} com sucesso.`,
+      title: "TVs ligadas",
+      description: `Todas as TVs foram ligadas com sucesso.`,
+    });
+  };
+
+  const handleTurnOffAll = async () => {
+    const onlineTVs = devices.filter(device => device.status === "online");
+    
+    for (const device of onlineTVs) {
+      await updateDevice(device.id, { status: "offline" });
+    }
+    
+    toast({
+      title: "TVs desligadas",
+      description: `Todas as TVs foram desligadas com sucesso.`,
     });
   };
 
@@ -103,23 +111,20 @@ const Index = () => {
             </h2>
             <div className="flex items-center gap-4">
               <Button
-                onClick={handleToggleAll}
-                disabled={devices.length === 0}
-                className={offlineDevices >= onlineDevices 
-                  ? "bg-success hover:bg-success/90" 
-                  : "bg-destructive hover:bg-destructive/90"}
+                onClick={handleTurnOnAll}
+                disabled={offlineDevices === 0}
+                className="bg-success hover:bg-success/90"
               >
-                {offlineDevices >= onlineDevices ? (
-                  <>
-                    <Power className="h-4 w-4 mr-2" />
-                    Ligar Todas
-                  </>
-                ) : (
-                  <>
-                    <PowerOff className="h-4 w-4 mr-2" />
-                    Desligar Todas
-                  </>
-                )}
+                <Power className="h-4 w-4 mr-2" />
+                Ligar Todas
+              </Button>
+              <Button
+                onClick={handleTurnOffAll}
+                disabled={onlineDevices === 0}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                <PowerOff className="h-4 w-4 mr-2" />
+                Desligar Todas
               </Button>
               <AddDeviceDialog onAdd={addDevice} />
             </div>
