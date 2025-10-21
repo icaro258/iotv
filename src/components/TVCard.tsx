@@ -57,21 +57,6 @@ export const TVCard = ({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge 
-              variant={isOnline ? "default" : "destructive"}
-              className={cn(
-                "gap-1.5 px-3 py-1 transition-all duration-200",
-                isOnline 
-                  ? "bg-success/20 text-success border-success/30" 
-                  : "bg-red-500/20 text-red-400 border-red-500/30"
-              )}
-            >
-              {isOnline ? (
-                <Wifi className="h-3 w-3" />
-              ) : (
-                <WifiOff className="h-3 w-3" />
-              )}
-            </Badge>
             {onRemove && (
               <Button
                 variant="ghost"
