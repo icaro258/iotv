@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { pythonApi } from '@/services/pythonApi';
 
 export interface Device {
   id: string;
@@ -61,6 +62,7 @@ export const useDevices = () => {
 
   const addDevice = async (deviceData: Omit<Device, 'id'>) => {
     try {
+      // Salvar no Supabase
       const { data, error } = await supabase.functions.invoke('devices', {
         body: { action: 'create', device: deviceData },
       });
@@ -76,6 +78,16 @@ export const useDevices = () => {
       }
 
       if (data?.device) {
+        // Também salvar na API Python/MySQL
+        await pythonApi.createDevice({
+          name: deviceData.name,
+          location: deviceData.location,
+          status: deviceData.status,
+          model: deviceData.model,
+          mac_address: deviceData.mac_address,
+          mqtt_topic: deviceData.mqtt_topic,
+        });
+
         setDevices(prev => [data.device, ...prev]);
         toast({
           title: "Dispositivo adicionado",
@@ -97,6 +109,7 @@ export const useDevices = () => {
 
   const updateDevice = async (deviceId: string, updates: Partial<Device>) => {
     try {
+      // Atualizar no Supabase
       const { data, error } = await supabase.functions.invoke('devices', {
         body: { action: 'update', id: deviceId, updates },
       });
@@ -112,6 +125,13 @@ export const useDevices = () => {
       }
 
       if (data?.device) {
+        // Também atualizar na API Python/MySQL (especialmente status)
+        if (updates.status) {
+          await pythonApi.toggleDevicePower(deviceId, updates.status);
+        } else {
+          await pythonApi.updateDevice(deviceId, updates);
+        }
+
         setDevices(prev => prev.map(device => 
           device.id === deviceId ? { ...device, ...data.device } : device
         ));
@@ -135,6 +155,7 @@ export const useDevices = () => {
 
   const removeDevice = async (deviceId: string) => {
     try {
+      // Remover do Supabase
       const { error } = await supabase.functions.invoke('devices', {
         body: { action: 'delete', id: deviceId },
       });
@@ -148,6 +169,9 @@ export const useDevices = () => {
         });
         return false;
       }
+
+      // Também remover da API Python/MySQL
+      await pythonApi.deleteDevice(deviceId);
 
       setDevices(prev => prev.filter(device => device.id !== deviceId));
       toast({
