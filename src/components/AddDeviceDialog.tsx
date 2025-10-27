@@ -28,7 +28,7 @@ export const AddDeviceDialog = ({ onAdd, className }: AddDeviceDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const ok = await onAdd({ name, location, model, mac_address: macAddress, status: 'offline' });
+    const ok = await onAdd({ name, location, model, mac_address: macAddress, status: 'online' });
     setLoading(false);
     if (ok) {
       setOpen(false);
@@ -72,7 +72,7 @@ export const AddDeviceDialog = ({ onAdd, className }: AddDeviceDialogProps) => {
             />
           </div>
           <p className="text-sm text-muted-foreground">
-            A TV será adicionada como desconectada
+            A TV será adicionada como ligada
           </p>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

@@ -116,7 +116,7 @@ const Index = () => {
                 className="bg-success hover:bg-success/90"
               >
                 <Power className="h-4 w-4 mr-2" />
-                Ligar Todas
+                Ligar TVs
               </Button>
               <Button
                 onClick={handleTurnOffAll}
@@ -124,7 +124,7 @@ const Index = () => {
                 className="bg-destructive hover:bg-destructive/90"
               >
                 <PowerOff className="h-4 w-4 mr-2" />
-                Desligar Todas
+                Desligar TVs
               </Button>
               <AddDeviceDialog onAdd={addDevice} />
             </div>
