@@ -1,5 +1,6 @@
 import { TVCard } from "@/components/TVCard";
 import { StatsCard } from "@/components/StatsCard";
+import Header from "@/components/Header";
 import { Monitor, Tv, Wifi, Activity, Power, PowerOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -57,19 +58,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-primary">
-              <Monitor className="h-8 w-8 text-primary-foreground" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              IoTV
-            </h1>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <div className="p-4 md:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-8">
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -162,6 +154,7 @@ const Index = () => {
           <p className="text-sm text-muted-foreground">
             Sistema de monitoramento atualizado em tempo real
           </p>
+        </div>
         </div>
       </div>
     </div>
