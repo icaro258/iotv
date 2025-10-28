@@ -1,15 +1,25 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { TVCard } from "@/components/TVCard";
 import { StatsCard } from "@/components/StatsCard";
-import { Monitor, Tv, Wifi, Activity, Power, PowerOff } from "lucide-react";
+import { Monitor, Tv, Wifi, Activity, Power, PowerOff, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useDevices } from "@/hooks/useDevicesDemo";
 import { AddDeviceDialog } from "@/components/AddDeviceDialog";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const { devices, loading, addDevice, updateDevice, removeDevice } = useDevices();
   const { toast } = useToast();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
 
   const onlineDevices = devices.filter(device => device.status === "online").length;
   const offlineDevices = devices.filter(device => device.status === "offline").length;
@@ -57,18 +67,41 @@ const Index = () => {
     });
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="p-3 rounded-xl bg-gradient-primary">
-              <Monitor className="h-8 w-8 text-primary-foreground" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-center gap-3 flex-1">
+              <div className="p-3 rounded-xl bg-gradient-primary">
+                <Monitor className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                IoTV
+              </h1>
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              IoTV
-            </h1>
+            <Button variant="outline" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
           </div>
         </div>
 
