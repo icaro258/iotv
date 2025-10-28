@@ -3,10 +3,10 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface Device {
   id: string;
-  name: string;
-  location: string;
+  nome: string;
+  localizacao: string;
   status: 'online' | 'offline';
-  model: string;
+  modelo: string;
   mqtt_topic?: string;
   sensor_data?: {
     current?: number;
@@ -24,10 +24,10 @@ export interface Device {
 const initialDevices: Device[] = [
   {
     id: '1',
-    name: 'TV 1',
-    location: 'Predio 1',
+    nome: 'TV 1',
+    localizacao: 'Predio 1',
     status: 'online',
-    model: 'Samsung',
+    modelo: 'Samsung',
     mqtt_topic: 'iotv/1/heartbeat',
     last_heartbeat: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
     heartbeat_interval: 60,
@@ -36,10 +36,10 @@ const initialDevices: Device[] = [
   },
   {
     id: '2',
-    name: 'TV 2',
-    location: 'Lab 1',
+    nome: 'TV 2',
+    localizacao: 'Lab 1',
     status: 'online',
-    model: 'LG',
+    modelo: 'LG',
     mqtt_topic: 'iotv/2/heartbeat',
     last_heartbeat: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
     heartbeat_interval: 60,
@@ -48,10 +48,10 @@ const initialDevices: Device[] = [
   },
   {
     id: '3',
-    name: 'TV Auditório',
-    location: 'Auditório Principal',
+    nome: 'TV Auditório',
+    localizacao: 'Auditório Principal',
     status: 'offline',
-    model: 'Sony',
+    modelo: 'Sony',
     mqtt_topic: 'iotv/3/heartbeat',
     last_heartbeat: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     heartbeat_interval: 60,
@@ -60,10 +60,10 @@ const initialDevices: Device[] = [
   },
   {
     id: '4',
-    name: 'TV 4',
-    location: 'Biblioteca',
+    nome: 'TV 4',
+    localizacao: 'Biblioteca',
     status: 'online',
-    model: 'Philips',
+    modelo: 'Philips',
     mqtt_topic: 'iotv/4/heartbeat',
     last_heartbeat: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
     heartbeat_interval: 60,
@@ -72,10 +72,10 @@ const initialDevices: Device[] = [
   },
   {
     id: '5',
-    name: 'TV 5',
-    location: 'predio 1 segundo andar',
+    nome: 'TV 5',
+    localizacao: 'predio 1 segundo andar',
     status: 'offline',
-    model: 'Philco"',
+    modelo: 'Philco"',
     mqtt_topic: 'iotv/5/heartbeat',
     last_heartbeat: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
     heartbeat_interval: 60,
@@ -111,7 +111,7 @@ export const useDevices = () => {
       setDevices(prev => [newDevice, ...prev]);
       toast({
         title: "Dispositivo adicionado",
-        description: `${deviceData.name} foi adicionado com sucesso.`,
+        description: `${deviceData.nome} foi adicionado com sucesso.`,
       });
       return true;
     } catch (error) {

@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 
 interface TVCardProps {
   id: string;
-  name: string;
-  location: string;
+  nome: string;
+  localizacao: string;
   status: "online" | "offline";
   lastSeen: string;
-  model?: string;
+  modelo?: string;
   sensorData?: {
     current?: number;
     voltage?: number;
@@ -22,11 +22,11 @@ interface TVCardProps {
 
 export const TVCard = ({ 
   id, 
-  name, 
-  location, 
+  nome, 
+  localizacao, 
   status, 
   lastSeen, 
-  model = "Smart TV",
+  modelo = "Smart TV",
   sensorData,
   onRemove
 }: TVCardProps) => {
@@ -52,8 +52,8 @@ export const TVCard = ({
               <Monitor className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-foreground">{name}</h3>
-              <p className="text-sm text-muted-foreground">{location}</p>
+              <h3 className="font-semibold text-lg text-foreground">{nome}</h3>
+              <p className="text-sm text-muted-foreground">{localizacao}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export const TVCard = ({
 
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Modelo</span>
-              <span className="text-sm font-medium text-foreground">{model}</span>
+              <span className="text-sm font-medium text-foreground">{modelo}</span>
             </div>
 
             {sensorData && (sensorData.current || sensorData.voltage || sensorData.temperature) && (

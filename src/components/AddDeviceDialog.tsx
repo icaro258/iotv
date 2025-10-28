@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 
 interface AddDeviceDialogProps {
-  onAdd: (device: { name: string; location: string; model: string; mac_address: string; status: 'online' | 'offline' }) => Promise<boolean> | boolean;
+  onAdd: (device: { nome: string; localizacao: string; modelo: string; mac: string; status: 'online' | 'offline' }) => Promise<boolean> | boolean;
   className?: string;
 }
 
@@ -28,7 +28,7 @@ export const AddDeviceDialog = ({ onAdd, className }: AddDeviceDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const ok = await onAdd({ name, location, model, mac_address: macAddress, status: 'online' });
+    const ok = await onAdd({ nome: name, localizacao: location, modelo: model, mac: macAddress, status: 'online' });
     setLoading(false);
     if (ok) {
       setOpen(false);

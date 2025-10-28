@@ -178,11 +178,11 @@ const Index = () => {
                   <TVCard
                     key={device.id}
                     id={device.id}
-                    name={device.name}
-                    location={device.location}
+                    nome={device.nome}
+                    localizacao={device.localizacao}
                     status={device.status}
                     lastSeen={formatLastSeen(device.last_heartbeat || device.updated_at)}
-                    model={device.model}
+                    modelo={device.modelo}
                     sensorData={device.sensor_data}
                     onRemove={() => removeDevice(device.id)}
                   />

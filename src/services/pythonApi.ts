@@ -3,11 +3,11 @@ const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || 'http://localhost:
 
 export interface PythonDevice {
   id: string;
-  name: string;
-  location: string;
+  nome: string;
+  localizacao: string;
   status: 'online' | 'offline';
-  model: string;
-  mac_address: string;
+  modelo: string;
+  mac: string;
   mqtt_topic?: string;
 }
 

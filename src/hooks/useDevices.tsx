@@ -5,11 +5,11 @@ import { pythonApi } from '@/services/pythonApi';
 
 export interface Device {
   id: string;
-  name: string;
-  location: string;
+  nome: string;
+  localizacao: string;
   status: 'online' | 'offline';
-  model: string;
-  mac_address: string;
+  modelo: string;
+  mac: string;
   mqtt_topic?: string;
   sensor_data?: {
     current?: number;
@@ -80,18 +80,18 @@ export const useDevices = () => {
       if (data?.device) {
         // Também salvar na API Python/MySQL
         await pythonApi.createDevice({
-          name: deviceData.name,
-          location: deviceData.location,
+          nome: deviceData.nome,
+          localizacao: deviceData.localizacao,
           status: deviceData.status,
-          model: deviceData.model,
-          mac_address: deviceData.mac_address,
+          modelo: deviceData.modelo,
+          mac: deviceData.mac,
           mqtt_topic: deviceData.mqtt_topic,
         });
 
         setDevices(prev => [data.device, ...prev]);
         toast({
           title: "Dispositivo adicionado",
-          description: `${deviceData.name} foi adicionado com sucesso.`,
+          description: `${deviceData.nome} foi adicionado com sucesso.`,
         });
         return true;
       }
