@@ -162,6 +162,7 @@ const Index = () => {
             icon={Activity}
             className="border-primary/30"
             onClick={handleDownloadCSV}
+            clickableLabel="relatório"
           />
         </div>
 

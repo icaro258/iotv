@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatsCardProps {
@@ -10,6 +10,7 @@ interface StatsCardProps {
   trend?: "up" | "down" | "neutral";
   className?: string;
   onClick?: () => void;
+  clickableLabel?: string;
 }
 
 export const StatsCard = ({ 
@@ -19,7 +20,8 @@ export const StatsCard = ({
   icon: Icon, 
   trend = "neutral",
   className,
-  onClick
+  onClick,
+  clickableLabel
 }: StatsCardProps) => {
   return (
     <Card 
@@ -40,6 +42,12 @@ export const StatsCard = ({
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold text-foreground">{value}</div>
+        {clickableLabel && (
+          <div className="flex items-center gap-1 mt-2 mb-1">
+            <Download className="h-3 w-3 text-primary" />
+            <span className="text-xs font-medium text-primary">{clickableLabel}</span>
+          </div>
+        )}
         {description && (
           <p className="text-xs text-muted-foreground mt-1">
             {description}
