@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useDevices } from "@/hooks/useDevicesDemo";
 import { AddDeviceDialog } from "@/components/AddDeviceDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 
 const Index = () => {
   const { devices, loading, addDevice, updateDevice, removeDevice } = useDevices();
@@ -57,6 +59,74 @@ const Index = () => {
     });
   };
 
+  const handleDownloadCSV = async () => {
+    try {
+      const now = new Date();
+      const startDate = startOfMonth(now);
+      const endDate = endOfMonth(now);
+
+      const { data, error } = await supabase
+        .from('devices')
+        .select('*')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        toast({
+          title: "Sem dados",
+          description: "Não há dados para exportar no mês atual.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Gerar CSV
+      const headers = ['ID', 'Nome', 'Localização', 'Status', 'Modelo', 'MAC', 'Último Heartbeat', 'Criado em', 'Atualizado em'];
+      const csvRows = [headers.join(',')];
+
+      data.forEach(device => {
+        const row = [
+          device.id,
+          device.name || '',
+          device.location || '',
+          device.status || '',
+          device.model || '',
+          device.mqtt_topic || '',
+          device.last_heartbeat ? format(new Date(device.last_heartbeat), 'dd/MM/yyyy HH:mm:ss') : '',
+          format(new Date(device.created_at), 'dd/MM/yyyy HH:mm:ss'),
+          format(new Date(device.updated_at), 'dd/MM/yyyy HH:mm:ss')
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `devices_${format(now, 'MM-yyyy')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Download completo",
+        description: "Arquivo CSV baixado com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+      toast({
+        title: "Erro",
+        description: "Falha ao gerar arquivo CSV.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -91,6 +161,7 @@ const Index = () => {
             description="Taxa de disponibilidade"
             icon={Activity}
             className="border-primary/30"
+            onClick={handleDownloadCSV}
           />
         </div>
 
